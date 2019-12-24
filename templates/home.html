@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home</title>
+</head>
+<body>
+	<h1>This is Home</h1>
+	{% for product in productlist %}
+
+		{{product.title}}
+		{{product.mrp}}
+		{{product.image.url}}
+
+	{% endfor %}
+</body>
+</html>
