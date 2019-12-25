@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>categorydetail</title>
+</head>
+<body>
+	{% for product in categorydetail.products.all %}
+	<img src={{ product.image.url }}>
+	<h6>{{product.mrp}}</h6>
+	<a href="{% url 'woodapp:productdetail' product.id %}"><p>{{product.title}}</p></a>
+	{% endfor %}
+</body>
+</html>

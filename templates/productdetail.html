@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>productdetail</title>
+</head>
+<body>
+
+	<img src="{{productdetail.image.url}}">
+	<h2>{{productdetail.title}}</h2>
+	<h3>{{productdetail.mrp}}</h3>
+	<a href="{% url 'ecommerceapp:addtocart' productdetail.id %}">ADD TO CART</a>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>cart</title>
+</head>
+<body>
+
+	<h1>Cart</h1>
+	{{cart}}
+	<a href="{% url 'ecommerceapp:clearcart' %}">Clear All</a>
+	<table id="refresh-cart" class="table table-bordered table-striped">
+		<tr>
+			<th>S.N.</th>
+			<th>Product</th>
+			<th>Rate</th>
+			<th>Quantiity</th>
+			<th>Subtotal</th>
+		</tr>
+		{% for cartproduct in cart.cartproduct_set.all %}
+		<tr>
+			<td>{{forloop.counter}}</td>
+			<td>{{cartproduct.product}}</td>
+			<td>{{cartproduct.rate}}</td>
+			<td><a href="{% url 'ecommerceapp:managecart' cartproduct.id 'decrease' %}"
+				 class="manage-cart btn btn-warning">-</a>
+				 {{cartproduct.quantity}}
+				 <a href="{% url 'ecommerceapp:managecart' cartproduct.id 'increase' %}"
+				 class="manage-cart btn btn-warning">+</a></td>
+			<td>{{cartproduct.subtotal}}
+				<a href="{% url 'ecommerceapp:managecart' cartproduct.id 'remove' %}" 
+				class="manage-cart btn btn-danger pull-right">X</a></td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<td colspan="3">Total</td>
+			<td>{{total_qty}}</td>
+			<td>{{cart.subtotal}}</td>
+		</tr>
+	</table>
+{% if cart.cartproduct_set.count > 0 %}
+<a href="{% url 'ecommerceapp:order' %}">Place Order</a>
+{% endif %}
+
+</body>
+</html>

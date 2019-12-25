@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>category</title>
+</head>
+<body>
+
+{% for category in maincategories %}
+<li>{{category.title}}
+	{% for sub in category.productcategory_set.all %}
+	<li><a href="{% url 'woodapp:categorydetail' sub.id %}">{{sub.title}} </li>
+	{% endfor %}
+</li>
+{% endfor %}
+
+</body>
+</html>
