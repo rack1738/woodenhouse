@@ -3,6 +3,18 @@ from django.views.generic import *
 from .models import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.urls import reverse_lazy
+from .forms import *
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
+
+
+class LoginMixin(object):
+    def dispatch(self, request, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('woodapp:login')
+        return super().dispatch(request, **kwargs)
 
 
 class HomeView(TemplateView):
@@ -11,6 +23,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['productlist'] = Product.objects.order_by('-id')
+        context['maincategories'] = ProductCategory.objects.filter(root=None)
         return context
 
 
@@ -55,11 +68,9 @@ class AddToCartView(View):
         cart_id = self.request.session.get('cart_id', None)
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
-            print("old cart")
         else:
             cart = Cart.objects.create(subtotal=0)
             self.request.session['cart_id'] = cart.id
-            print("new cart")
 
         cartproduct_query = cart.cartproduct_set.filter(product=product)
         if cartproduct_query.exists():
@@ -74,7 +85,7 @@ class AddToCartView(View):
         cart.subtotal += product.mrp
         cart.save()
         messages.success(self.request, 'Cart added successfully')
-        return redirect('ecommerceapp:productdetail', pk=self.kwargs['pk'])
+        return redirect('woodapp:productdetail', pk=self.kwargs['pk'])
         return context
 
 
@@ -141,7 +152,7 @@ class ManageCartView(View):
             messages.error(self.request, 'Invalid Operation')
             context['message'] = "Invalid Operation"
         return redirect('ecommerceapp:cart')
-    return context
+        return context
 
 
 class ClearCartView(View):
@@ -189,3 +200,72 @@ class OrderCreateView(SuccessMessageMixin, CreateView):
             form.instance.total = form.instance.subtotal - form.instance.discount
             self.request.session['cart_id'] = None
         return super().form_valid(form)
+
+
+class LoginView(FormView):
+    template_name = 'login.html'
+    form_class = LoginForm
+    success_url = reverse_lazy('woodapp:home')
+
+    def form_valid(self, form):
+        u_name = form.cleaned_data['username']
+        p_word = form.cleaned_data['password']
+        user = authenticate(username=u_name, password=p_word)
+        if user is not None:
+            login(self.request, user)
+        else:
+            return render(self.request, self.template_name, {
+                'error': "Invalid Username or Password",
+                'form': form
+            })
+        return super().form_valid(form)
+
+
+class LogoutView(View):
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            logout(request)
+            return redirect('/')
+
+
+class SignupView(FormView):
+    template_name = 'signup.html'
+    form_class = SignupForm
+    success_url = reverse_lazy('woodapp:login')
+
+    def form_valid(self, form):
+        u_name = form.cleaned_data['username']
+        p_word = form.cleaned_data['password']
+        c_pword = form.cleaned_data['confirm_password']
+        if p_word != c_pword:
+            return render(self.request, self.template_name, {
+                'error': "Passwords did not match",
+                'form': form
+            })
+        if User.objects.filter(username=u_name).exists():
+            return render(self.request, self.template_name, {
+                'error': "User already exists",
+                'form': form
+            })
+        user = User.objects.create_user(username=u_name, password=p_word)
+        # user_group = Group.objects.get(name='User')
+        # user_group.user_set.add(user)
+        # login(self.request, user)
+        return super().form_valid(form)
+
+
+class SearchResultsView(TemplateView):
+    template_name = 'searchresult.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('search')
+        category = ProductCategory.objects.filter(
+            Q(title__icontains=query)
+        )
+        productlist = Product.objects.filter(
+            Q(title__icontains=query) | Q(product_id__icontains=query)
+        )
+        context['category'] = category
+        context['productlist'] = productlist
+        return context

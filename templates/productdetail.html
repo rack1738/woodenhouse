@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>productdetail</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Productdetail{% endblock %}
+
+
+{% block content %}
 
 	<img src="{{productdetail.image.url}}">
 	<h2>{{productdetail.title}}</h2>
 	<h3>{{productdetail.mrp}}</h3>
-	<a href="{% url 'ecommerceapp:addtocart' productdetail.id %}">ADD TO CART</a>
+	<a href="{% url 'woodapp:addtocart' productdetail.id %}">ADD TO CART</a>
 
-</body>
-</html>
+{% endblock %}

@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>category</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}category{% endblock %}
+
+
+{% block content %}
 
 {% for category in maincategories %}
 <li>{{category.title}}
@@ -13,5 +14,4 @@
 </li>
 {% endfor %}
 
-</body>
-</html>
+{% endblock %}
