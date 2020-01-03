@@ -8,6 +8,7 @@ from .forms import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
+from django.http import JsonResponse
 
 
 class LoginMixin(object):
@@ -22,7 +23,7 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['productlist'] = Product.objects.order_by('-id')
+        context['productlist'] = Product.objects.order_by('?')
         context['maincategories'] = ProductCategory.objects.filter(root=None)
         return context
 
@@ -60,33 +61,35 @@ class ProductDetailView(DetailView):
 
 
 class AddToCartView(View):
-    template_name = 'addtocart.html'
+    # template_name = 'addtocart.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = Product.objects.get(id=self.kwargs['pk'])
-        cart_id = self.request.session.get('cart_id', None)
-        if cart_id:
-            cart = Cart.objects.get(id=cart_id)
-        else:
-            cart = Cart.objects.create(subtotal=0)
-            self.request.session['cart_id'] = cart.id
+    def get(self, request, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        if request.is_ajax():
+            product = Product.objects.get(id=self.kwargs['pk'])
+            cart_id = self.request.session.get('cart_id', None)
+            if cart_id:
+                cart = Cart.objects.get(id=cart_id)
+            else:
+                cart = Cart.objects.create(subtotal=0)
+                self.request.session['cart_id'] = cart.id
 
-        cartproduct_query = cart.cartproduct_set.filter(product=product)
-        if cartproduct_query.exists():
-            cartproduct = cartproduct_query.first()
-            cartproduct.quantity += 1
-            cartproduct.subtotal += product.mrp
-            cartproduct.save()
-        else:
-            cartproduct = CartProduct.objects.create(
-                cart=cart, product=product, rate=product.mrp,
-                subtotal=product.mrp)
-        cart.subtotal += product.mrp
-        cart.save()
-        messages.success(self.request, 'Cart added successfully')
-        return redirect('woodapp:productdetail', pk=self.kwargs['pk'])
-        return context
+            cartproduct_query = cart.cartproduct_set.filter(product=product)
+            if cartproduct_query.exists():
+                cartproduct = cartproduct_query.first()
+                cartproduct.quantity += 1
+                cartproduct.subtotal += product.mrp
+                cartproduct.save()
+            else:
+                cartproduct = CartProduct.objects.create(
+                    cart=cart, product=product, rate=product.mrp,
+                    subtotal=product.mrp)
+            cart.subtotal += product.mrp
+            cart.save()
+            # messages.success(self.request, 'Cart added successfully')
+            return JsonResponse({'message': 'Item added successfully'})
+        # return redirect('woodapp:productdetail', pk=self.kwargs['pk'])
+        # return context
 
 
 class CartView(TemplateView):
@@ -105,7 +108,7 @@ class CartView(TemplateView):
         return context
 
 
-class ManageCartView(View):
+class ManageCartView(TemplateView):
     template_name = 'managecart.html'
 
     def get_context_data(self, **kwargs):
@@ -151,7 +154,7 @@ class ManageCartView(View):
         else:
             messages.error(self.request, 'Invalid Operation')
             context['message'] = "Invalid Operation"
-        return redirect('ecommerceapp:cart')
+        # return redirect('woodapp:cart')
         return context
 
 

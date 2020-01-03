@@ -24,13 +24,13 @@
 			<td>{{forloop.counter}}</td>
 			<td>{{cartproduct.product}}</td>
 			<td>{{cartproduct.rate}}</td>
-			<td><a href="{% url 'ecommerceapp:managecart' cartproduct.id 'decrease' %}"
+			<td><a href="{% url 'woodapp:managecart' cartproduct.id 'decrease' %}"
 				 class="manage-cart btn btn-warning">-</a>
 				 {{cartproduct.quantity}}
-				 <a href="{% url 'ecommerceapp:managecart' cartproduct.id 'increase' %}"
+				 <a href="{% url 'woodapp:managecart' cartproduct.id 'increase' %}"
 				 class="manage-cart btn btn-warning">+</a></td>
 			<td>{{cartproduct.subtotal}}
-				<a href="{% url 'ecommerceapp:managecart' cartproduct.id 'remove' %}" 
+				<a href="{% url 'woodapp:managecart' cartproduct.id 'remove' %}" 
 				class="manage-cart btn btn-danger pull-right">X</a></td>
 		</tr>
 		{% endfor %}
@@ -43,7 +43,7 @@
 	</div>
 	</div>
 {% if cart.cartproduct_set.count > 0 %}
-<a href="{% url 'ecommerceapp:order' %}">Place Order</a>
+<a href="{% url 'woodapp:order' %}">Place Order</a>
 {% endif %}
 
 {% endblock %}

@@ -20,7 +20,7 @@
       <div class="card-body">
         <a href="{% url 'woodapp:productdetail' product.id %}"><h5 class="card-title">{{product.title}}</h5></a>
         <p class="card-text">{{product.mrp}}</p>
-        <p class="card-text"><a href="{% url 'woodapp:addtocart' product.id %}">ADD TO CART</a></p>
+        <p class="card-text"><a class="add-to-cart" href="{% url 'woodapp:addtocart' product.id %}">ADD TO CART</a></p>
       </div>
     </div>
   </div>
