@@ -47,11 +47,11 @@
 			<a href="{% url 'woodapp:categorydetail' category.id %}" class="list-group-item list-group-item-action">{{category.title}}</a>
 		</div>
 
-		{% for product in category.product_set.all %}
+		<!-- {% for product in category.product_set.all %}
 			<a href="{% url 'woodapp:productdetail' product.id %}">{{product.title}}</a>
 			{{product.mrp}}
-			{{product.image.url}}
-		{% endfor %}
+			<img src="{{product.image.url}}">
+		{% endfor %} -->
 
 	{% endfor %}
 	</div>
@@ -59,6 +59,7 @@
 	<div class="col-9" class="col px-md-5">	
 		{% for category in maincategories %}
 		{% for product in category.products.all %}
+			<img src="{{product.image.url}}" height="400px" width="350px">
 			<a href="{% url 'woodapp:productdetail' product.id %}">{{product.title}}</a>
 			{{product.mrp}}
 		{% endfor %}

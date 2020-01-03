@@ -18,6 +18,23 @@
 
   </head>
   <body>
+
+      <div id="preloder">
+        <div class="loader"></div>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-success" style="position: fixed; top:50px; right:50px; z-index: 100,">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        {{message}}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+
     <div id="json-message" style="position: fixed; top:50px; right:50px; z-index: 100;">
   </div>
 <!-- navbar added -->
@@ -149,5 +166,28 @@
         });
       });
     </script>
+
+<script>
+    $('#refresh-cart').on('click', '.manage-cart', function(event){
+      event.preventDefault();
+      var $this = $(this)
+      var url = $this.attr('href');
+      $.ajax({
+        url: url,
+        // data: {
+        //  'extras': 'Rashik'
+        // },
+        success: function(data){
+          $('#refresh-cart').load(' #refresh-cart');
+          $('#json-message').html('<div class="alert alert-success">'+ data.message +'</div>');
+          $('#json-message').fadeIn().delay(3000).fadeOut();
+        }
+      });
+    });
+
+  
+
+</script>
+
   </body>
 </html>

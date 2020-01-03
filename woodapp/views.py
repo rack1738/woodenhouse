@@ -18,6 +18,14 @@ class LoginMixin(object):
         return super().dispatch(request, **kwargs)
 
 
+class ForAllMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['productlist'] = Product.objects.order_by('-id')
+        context['maincategories'] = ProductCategory.objects.filter(root=None)
+        return context
+
+
 class HomeView(TemplateView):
     template_name = 'home.html'
 
@@ -28,7 +36,7 @@ class HomeView(TemplateView):
         return context
 
 
-class CategoryView(TemplateView):
+class CategoryView(ForAllMixin, TemplateView):
     template_name = 'category.html'
 
     def get_context_data(self, **kwargs):
@@ -38,7 +46,7 @@ class CategoryView(TemplateView):
         return context
 
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(ForAllMixin, DetailView):
     template_name = 'categorydetail.html'
     model = ProductCategory
     context_object_name = 'categorydetail'
@@ -49,7 +57,7 @@ class CategoryDetailView(DetailView):
         return context
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(ForAllMixin, DetailView):
     template_name = 'productdetail.html'
     model = Product
     context_object_name = 'productdetail'
@@ -92,7 +100,7 @@ class AddToCartView(View):
         # return context
 
 
-class CartView(TemplateView):
+class CartView(ForAllMixin, TemplateView):
     template_name = 'cart.html'
 
     def get_context_data(self, **kwargs):
@@ -108,61 +116,48 @@ class CartView(TemplateView):
         return context
 
 
-class ManageCartView(TemplateView):
-    template_name = 'managecart.html'
+class ManageCartView(View):
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        cart_id = self.request.session.get('cart_id', None)
-        cartproduct_id = self.kwargs['cartproduct_id']
-        action = self.kwargs['action']
-        cart = Cart.objects.get(id=cart_id)
-        cartproduct = CartProduct.objects.get(id=cartproduct_id)
-        # extras = request.GET.get('extras')
-        # print(extras)
-        if action == "increase":
-            cartproduct.quantity += 1
-            cartproduct.subtotal += cartproduct.product.mrp
-            cartproduct.save()
-            cart.subtotal += cartproduct.product.mrp
-            cart.save()
-            messages.success(
-                self.request, cartproduct.product.title + "'s quantity increased")
-            context['message'] = "Item quantity increased"
-        elif action == "decrease":
-            cartproduct.quantity -= 1
-            cartproduct.subtotal -= cartproduct.product.mrp
-            if cartproduct.quantity <= 0:
-                cartproduct.delete()
-                cart.subtotal = 0
-            else:
+    def get(self, request, **kwargs):
+        if request.is_ajax():
+            cart_id = self.request.session.get('cart_id', None)
+            cartproduct_id = self.kwargs['cartproduct_id']
+            action = self.kwargs['action']
+            cart = Cart.objects.get(id=cart_id)
+            cartproduct = CartProduct.objects.get(id=cartproduct_id)
+            if action == "increase":
+                cartproduct.quantity += 1
+                cartproduct.subtotal += cartproduct.product.mrp
                 cartproduct.save()
-                cart.subtotal -= cartproduct.product.mrp
-            cart.save()
-            messages.success(
-                self.request, cartproduct.product.title + "'s quantity decreased")
-            context['message'] = "Item quantity decreased"
-        elif action == "remove":
-            cart.subtotal -= cartproduct.subtotal
-            cart.save()
-            cartproduct.delete()
-            messages.success(
-                self.request, cartproduct.product.title + " removed from cart")
+                cart.subtotal += cartproduct.product.mrp
+                cart.save()
+                message = cartproduct.product.title + "'s quantity increased"
+            elif action == "decrease":
+                cartproduct.quantity -= 1
+                cartproduct.subtotal -= cartproduct.product.mrp
+                if cartproduct.quantity <= 0:
+                    cartproduct.delete()
+                    cart.subtotal = 0
+                else:
+                    cartproduct.save()
+                    cart.subtotal -= cartproduct.product.mrp
+                cart.save()
+                message = cartproduct.product.title + "'s quantity decreased"
+            elif action == "remove":
+                cart.subtotal -= cartproduct.subtotal
+                cart.save()
+                cartproduct.delete()
+                message = cartproduct.product.title + " removed from cart"
+            else:
+                messages.error(self.request, 'Invalid Operation')
 
-            context['message'] = "Item removed from cart"
-        else:
-            messages.error(self.request, 'Invalid Operation')
-            context['message'] = "Invalid Operation"
-        # return redirect('woodapp:cart')
-        return context
+            return JsonResponse({'message': message})
+            
 
 
 class ClearCartView(View):
-    template_name = 'managecart.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get(self, request):
         cart_id = self.request.session.get('cart_id', None)
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
@@ -172,25 +167,25 @@ class ClearCartView(View):
                 cart.subtotal = 0
                 cart.save()
                 messages.success(self.request, 'Cart Cleared successfully')
-                return redirect('ecommerceapp:cart')
+                return redirect('woodapp:cart')
                 context['message'] = "Shopping cart cleared"
             else:
                 messages.error(self.request, 'No Items in Cart')
-                return redirect('ecommerceapp:cart')
+                return redirect('woodapp:cart')
 
                 context['message'] = "no items in cart"
         else:
             messages.error(self.request, 'No Items in Cart')
-            return redirect('ecommerceapp:cart')
+            return redirect('woodapp:cart')
             context['message'] = "no items in cart"
-        return context
+        
 
 
 class OrderCreateView(SuccessMessageMixin, CreateView):
     template_name = 'order.html'
     model = Order
     form_class = OrderForm
-    success_url = reverse_lazy('ecommerceapp:home')
+    success_url = reverse_lazy('woodapp:cart')
     success_message = 'Order placed successfully'
 
     def form_valid(self, form):
@@ -205,7 +200,7 @@ class OrderCreateView(SuccessMessageMixin, CreateView):
         return super().form_valid(form)
 
 
-class LoginView(FormView):
+class LoginView(ForAllMixin, FormView):
     template_name = 'login.html'
     form_class = LoginForm
     success_url = reverse_lazy('woodapp:home')
@@ -231,7 +226,7 @@ class LogoutView(View):
             return redirect('/')
 
 
-class SignupView(FormView):
+class SignupView(ForAllMixin, FormView):
     template_name = 'signup.html'
     form_class = SignupForm
     success_url = reverse_lazy('woodapp:login')
@@ -257,7 +252,7 @@ class SignupView(FormView):
         return super().form_valid(form)
 
 
-class SearchResultsView(TemplateView):
+class SearchResultsView(ForAllMixin,TemplateView):
     template_name = 'searchresult.html'
 
     def get_context_data(self, **kwargs):
