@@ -11,13 +11,13 @@
 	<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="{% static 'img/nancy.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="400px" alt="...">
+      <img src="{% static 'img/nancy.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="600px" alt="...">
     </div>
     <div class="carousel-item">
-      <img src="{% static 'img/lisa.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="400px" alt="...">
+      <img src="{% static 'img/lisa.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="600px" alt="...">
     </div>
     <div class="carousel-item">
-      <img src="{% static 'img/nancy1.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="400px" alt="...">
+      <img src="{% static 'img/nancy1.jpg' %}" class="d-block w-100" class="img-fluid" width="400px" height="600px" alt="...">
     </div>
   </div>
   <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
@@ -30,16 +30,17 @@
   </a>
 </div>
 </div>
+<h2 class="text-center">Products</h2>
 	<!-- carousel ended	 -->
 
 
 	<!-- category list -->
 	
-	<div class="container-fluid my-4">
+	<!-- <div class="container-fluid my-4">
 	<div class= "row" class="col mx-md-5">
-	<div class="col-3" class="col px-md-5">	
+	<div class="col-3" class="col px-md-5">	 -->
 
-		<h2 class="text-center">Category</h2>
+		<!-- <h2 class="text-center">Category</h2>
 
 	{% for category in maincategories %}
 		<div class="list-group">
@@ -47,11 +48,7 @@
 			<a href="{% url 'woodapp:categorydetail' category.id %}" class="list-group-item list-group-item-action">{{category.title}}</a>
 		</div>
 
-		<!-- {% for product in category.product_set.all %}
-			<a href="{% url 'woodapp:productdetail' product.id %}">{{product.title}}</a>
-			{{product.mrp}}
-			<img src="{{product.image.url}}">
-		{% endfor %} -->
+		
 
 	{% endfor %}
 	</div>
@@ -66,8 +63,28 @@
 		{% endfor %}
 	</div>
 </div>
-</div>
+</div> -->
 
 <!-- category list ended -->
+
+<div class="row">
+	{% for category in maincategories %}
+	{% for product in category.products.all %}
+	<div class="col-md-3 col-sm-6">
+		<figure class="card card-product-grid">
+			<div class="img-wrap"> <img src="{{product.image.url}}" height="200px" width="300px"> </div>
+			<figcaption class="info-wrap border-top">
+				<a class="title" href="{% url 'woodapp:productdetail' product.id %}">{{product.title}}</a>
+				<div class="price mt-2">{{product.mrp}}</div> <!-- price-wrap.// -->
+			</figcaption>
+		</figure> <!-- card // -->
+	</div> <!-- col.// -->
+
+	{% endfor %}
+	{% endfor %}
+	
+</div><!-- row.// -->
+
+
 
 {% endblock %}
