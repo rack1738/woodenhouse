@@ -14,7 +14,7 @@
 	font-weight: 500;
 }
 
-.username,.password{
+.username,.password,.c_password{
 	border: 0;
 	background: none;
 	display: block;

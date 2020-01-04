@@ -1,17 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block css %}
+ <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
 {% block title %}Sign Up{% endblock %}
 
 
 {% block content %}
 
-<div class="container my-4">
-	<form method="POST">
+<form  class="box" method="POST">
 		{% csrf_token %}
-		{{ form.as_p }}
-		<button>Submit</button>
-		{{ error }}
-	</form>
-</div>
+		<h1>Sign Up</h1>
+		<div >
+			{{ form.username }}
+			{{ form.username.errors }}
+		</div>
+
+		<div>
+			{{ form.password }}
+			{{ form.password.errors }}
+		</div>
+
+		<div>
+			{{ form.confirm_password }}
+			{{ form.confirm_password.errors }}
+		</div>
+
+		<div>
+		<button class="submit">Submit</button>
+		</div>
+
+		<h3>{{ error }}</h3>
+</form>
+
+
 {% endblock %}

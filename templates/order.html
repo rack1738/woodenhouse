@@ -1,18 +1,35 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
+{% block css %}
+ <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
 {% block title %}Order{% endblock %}
 
 
 {% block content %}
 
-	<form method="Post">
-	{% csrf_token %}
-	{{ form.as_p }}
+	<form  class="box" method="POST">
+		{% csrf_token %}
+		<h1>Order</h1>
+		<div >
+			{{ form.street }}
+			{{ form.street.errors }}
+		</div>
 
-	
-	<button class="btn btn-secondary btn-lg">Order</button>
+		<div>
+			{{ form.mobile }}
+			{{ form.mobile.errors }}
+		</div>
 
-</form>
+		<div>
+		<button class="submit">Submit</button>
+		</div>
+
+		<h3>{{ error }}</h3>
+	</form>
+
 
 {% endblock %}
