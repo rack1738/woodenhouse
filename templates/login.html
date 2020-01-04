@@ -14,8 +14,8 @@
 
 	<form  class="box" method="POST">
 		{% csrf_token %}
-		<h2>Login</h2>
-		<div>
+		<h1>Login</h1>
+		<div >
 			{{ form.username }}
 			{{ form.username.errors }}
 		</div>
@@ -26,7 +26,7 @@
 		</div>
 
 		<div>
-		<button>Submit</button>
+		<button class="submit">Submit</button>
 		</div>
 
 		{{ error }}
