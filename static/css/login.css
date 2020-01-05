@@ -29,6 +29,10 @@
 	transition: 0.25s;
 }
 
+.username:focus,.password:focus{
+	width: 250px;
+}
+
 .submit{
 	border: 0;
 	background: none;
