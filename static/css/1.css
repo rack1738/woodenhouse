@@ -66,3 +66,41 @@ body{
 .fon p,.fon a,.fon h6{
 	color: yellow;
 }
+
+.carousel-item{
+	height: 100vh;
+	min-height: 300px;
+	background: no-repeat center center scroll;
+	-webkit-background-size: cover;
+	background-size: cover;
+}
+
+.carousel-caption{
+	bottom: 220px;
+}
+
+.carousel-caption h5{
+	font-size: 65px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-top: 25px;
+	font-family: "Merienda", Georgia, sans-serif;
+	color: green;
+}
+
+.carousel-caption p{
+	width: 60%;
+	margin: auto;
+	font-size: 24px;
+	line-height: 1.9;
+	font-family: 'Muli', sans-serif;
+	color: yellow;
+}
+
+.tit{
+	font-size: 38px;
+	margin-bottom: 20px;
+	font-family: "Merienda", Georgia, sans-serif;
+	color: yellow;
+
+}
