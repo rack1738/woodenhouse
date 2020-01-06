@@ -102,5 +102,88 @@ body{
 	margin-bottom: 20px;
 	font-family: "Merienda", Georgia, sans-serif;
 	color: yellow;
+	padding-bottom: 45px;
+}
 
+.container-products{
+	padding-bottom: 95px;
+}
+
+.service-container{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	justify-content: center;
+	align-items: center;
+}
+
+.service-box{
+	position: relative;
+	width: 300px;
+	padding: 40px;
+	/*background: #fff*/
+	margin: 20px;
+	box-sizing: border-box;
+	overflow: hidden;
+	text-align: center;
+}
+
+.service-container .icon{
+	position: relative;
+	width: 80px;
+	height: 80px;
+	color: #fff;
+	background: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0 auto;
+	border-radius: 50%;
+	font-size: 40px;
+	font-weight: 700;
+	transition: 1s;
+}
+
+.service-container .service-box:nth-child(1) .icon
+{
+	box-shadow: 0 0 0 0 #e91e63;
+	background: #e91e63;
+}
+
+.service-container .service-box:nth-child(1):hover .icon
+{
+	box-shadow: 0 0 0 400px #e91e63;
+}
+
+.service-container .service-box:nth-child(2) .icon
+{
+	box-shadow: 0 0 0 0 #23e629;
+	background: #23e629;
+}
+
+.service-container .service-box:nth-child(2):hover .icon
+{
+	box-shadow: 0 0 0 400px #23e629;
+}
+
+.service-container .service-box:nth-child(3) .icon
+{
+	box-shadow: 0 0 0 0 #2196f3;
+	background: #2196f3;
+}
+
+.service-container .service-box:nth-child(3):hover .icon
+{
+	box-shadow: 0 0 0 400px #2196f3;
+}
+
+.service-container .service-box .service-content{
+	position: relative;
+	z-index: 1;
+	transition: 0.5s;
+}
+
+.service-container .service-box .service-content p{
+	margin: 0;
+	padding: 0;
 }
